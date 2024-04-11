@@ -9,7 +9,7 @@
 #define MOTOR_R_B 5
 #define MOTOR_SPEED_L 10
 #define MOTOR_SPEED_R 9
-#define SPEED 50
+#define SPEED 40
 const float SENSOR_CALC = 29.0 * 2.0;
 
 void setup() {
@@ -31,17 +31,28 @@ void loop() {
   float frontSensor = checkFrontSensor();
   Serial.println(leftSensor);
   Serial.println(frontSensor);
-  if (leftSensor > 5.8f) {
-    goLeft();
-  } else if (frontSensor > 200.00f) {
+  if (frontSensor > 200.00f || frontSensor < 0) {
     goBackwards();
-  } else if (frontSensor < 3.00f) {
-    goBackwards();
-  } else if (frontSensor < 4.50f) {
-    goRight();
-    delay(5 00);
-  } else if (leftSensor < 3.00f) {
+    delay(50);
+  } else if (leftSensor > 200.00f || leftSensor < 0) {
     goSmallRight();
+    delay(10);
+  } else if (leftSensor > 10.50f) {
+    goLeft();
+  } else if (frontSensor < 4.00f) {
+    goRight();
+    delay(500);
+    frontSensor = checkFrontSensor();
+    if (frontSensor < 4.00f) {
+      goRight();
+      delay(500);
+    }
+  } else if (leftSensor > 4.50f) {
+    goSmallLeft();
+  } else if (leftSensor < 3.30f) {
+    goSmallRight();
+    delay(10);
+    goForwards();
   } else {
     goForwards();
   }
@@ -88,8 +99,17 @@ void goLeft() {
   digitalWrite(MOTOR_L_B, LOW);
   digitalWrite(MOTOR_R_F, HIGH);
   digitalWrite(MOTOR_R_B, LOW);
-  analogWrite(MOTOR_SPEED_L, SPEED/2);
-  analogWrite(MOTOR_SPEED_R, SPEED*7/4);
+  analogWrite(MOTOR_SPEED_L, SPEED*5/10);
+  analogWrite(MOTOR_SPEED_R, SPEED*30/10);
+}
+
+void goSmallLeft() {
+  digitalWrite(MOTOR_L_F, HIGH);
+  digitalWrite(MOTOR_L_B, LOW);
+  digitalWrite(MOTOR_R_F, HIGH);
+  digitalWrite(MOTOR_R_B, LOW);
+  analogWrite(MOTOR_SPEED_L, SPEED*7/10);
+  analogWrite(MOTOR_SPEED_R, SPEED*20/10);
 }
 
 void goRight() {
@@ -97,8 +117,8 @@ void goRight() {
   digitalWrite(MOTOR_L_B, LOW);
   digitalWrite(MOTOR_R_F, LOW);
   digitalWrite(MOTOR_R_B, HIGH);
-  analogWrite(MOTOR_SPEED_L, SPEED*3/2);
-  analogWrite(MOTOR_SPEED_R, SPEED*3/2);
+  analogWrite(MOTOR_SPEED_L, SPEED*15/10);
+  analogWrite(MOTOR_SPEED_R, SPEED*15/10);
 }
 
 void goSmallRight() {
@@ -106,6 +126,6 @@ void goSmallRight() {
   digitalWrite(MOTOR_L_B, LOW);
   digitalWrite(MOTOR_R_F, HIGH);
   digitalWrite(MOTOR_R_B, LOW);
-  analogWrite(MOTOR_SPEED_L, SPEED*5/4);
-  analogWrite(MOTOR_SPEED_R, SPEED*3/4);
+  analogWrite(MOTOR_SPEED_L, SPEED*13/10);
+  analogWrite(MOTOR_SPEED_R, SPEED*7/10);
 }
